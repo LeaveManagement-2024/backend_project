@@ -91,8 +91,8 @@ public class EmployeeController {
     @PutMapping(path = "/update/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> updateUser(
             @PathVariable Long id,
-            @RequestParam("firstNameFr") String firstNameFr,
-            @RequestParam("lastNameFr") String lastNameFr,
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
             @RequestParam("phone") String phone,
@@ -100,7 +100,7 @@ public class EmployeeController {
             @RequestParam("cin") String cin,
             @RequestParam("addressFr") String addressFr,
             @RequestParam("hireDate") String hireDate, // Format: "yyyy-MM-dd"
-            @RequestParam("workLocationFr") String workLocationFr,
+            @RequestParam("workLocation") String workLocation,
             @RequestParam(value = "image",required = false) MultipartFile image,
             @RequestParam("postId") Long postId,
             @RequestParam("gradeId") Long gradeId,
@@ -108,8 +108,8 @@ public class EmployeeController {
             @RequestParam(value = "filiereId",required = false) Long filiereId) throws IOException {
 
         EmployeesDTO employeesDTO = new EmployeesDTO();
-        employeesDTO.setFirstName(firstNameFr);
-        employeesDTO.setLastName(lastNameFr);
+        employeesDTO.setFirstName(firstName);
+        employeesDTO.setLastName(lastName);
         employeesDTO.setEmail(email);
         employeesDTO.setPassword(password);
         employeesDTO.setPhone(phone);
@@ -117,7 +117,7 @@ public class EmployeeController {
         employeesDTO.setCin(cin);
         employeesDTO.setAddress(addressFr);
         employeesDTO.setHireDate(LocalDate.parse(hireDate));
-        employeesDTO.setWorkLocation(workLocationFr);
+        employeesDTO.setWorkLocation(workLocation);
         employeesDTO.setImage(image);
         employeesDTO.setPostId(postId);
         employeesDTO.setGradeId(gradeId);
