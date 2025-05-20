@@ -11,17 +11,16 @@ public class Posts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long IdPost;
     @Column(columnDefinition = "NVARCHAR(255)")
-    private String postNameFr;
-    @Column(columnDefinition = "NVARCHAR(255)")
-    private String postNameAr;
+    private String postName;
+
 
     public Posts() {
     }
 
-    public Posts(Long idPost, String postNameFr, String postNameAr) {
+    public Posts(Long idPost, String postNameFr) {
         IdPost = idPost;
-        this.postNameFr = postNameFr;
-        this.postNameAr = postNameAr;
+        this.postName = postNameFr;
+
     }
 
     public Posts(Long idPost) {
@@ -36,19 +35,13 @@ public class Posts {
         IdPost = idPost;
     }
 
-    public String getPostNameFr() {
-        return postNameFr;
+    public String getPostName() {
+        return postName;
     }
 
-    public void setPostNameFr(String postNameFr) {
-        this.postNameFr = postNameFr;
+    public void setPostName(String postNameFr) {
+        this.postName = postNameFr;
     }
 
-    public String getPostNameAr() {
-        return postNameAr;
-    }
 
-    public void setPostNameAr(String postNameAr) {
-        this.postNameAr = postNameAr;
-    }
 }

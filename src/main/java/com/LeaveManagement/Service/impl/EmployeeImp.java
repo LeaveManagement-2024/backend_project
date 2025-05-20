@@ -57,7 +57,6 @@ public class EmployeeImp implements EmployeeService {
             // Convertir les dates de PublicHoliday en LocalDate pour la comparaison
             LocalDate holidayStart = new java.sql.Date(holiday.getStartDate().getTime()).toLocalDate();
             LocalDate holidayEnd = new java.sql.Date(holiday.getEndDate().getTime()).toLocalDate();
-
             // Vérifier si la date tombe pendant un jour férié
             if (!date.isBefore(holidayStart) && !date.isAfter(holidayEnd)) {
                 return true;
@@ -85,7 +84,7 @@ public class EmployeeImp implements EmployeeService {
     @Autowired
     private GradesRepo gradesRepo;
     @Autowired
-    private FiliereRepo filiereRepo;
+    private DepartementRepo departementRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final String storageDirectoryPath = Paths.get("uploaded-images").toAbsolutePath().toString();
@@ -119,10 +118,7 @@ public class EmployeeImp implements EmployeeService {
 
     @Override
     public Long addEmployee(EmployeesDTO employeeDTO) throws IOException {
-        //Posts post = postsRepo.findById(employeeDTO.getPostId()).orElse(null);
-        //Grades grade = gradesRepo.findById(employeeDTO.getGradeId()).orElse(null);
-       //Profiles profile = profileRepo.findById(employeeDTO.getProfileId()).orElse(null);
-        //Filiere filiere= filiereRepo.findById(employeeDTO.getFiliereId()).orElse(null);
+        // Create a new employee and set basic properties
         Employees employee = new Employees();
         employee.setFirstName(employeeDTO.getFirstName());
         employee.setLastName(employeeDTO.getLastName());
@@ -134,8 +130,34 @@ public class EmployeeImp implements EmployeeService {
         employee.setAddress(employeeDTO.getAddress());
         employee.setHireDate(employeeDTO.getHireDate());
         employee.setWorkLocation(employeeDTO.getWorkLocation());
-        MultipartFile file = employeeDTO.getImage();
 
+        // Handle optional relationships
+        // Only try to set post if postId is not null
+        if (employeeDTO.getPostId() != null) {
+            Posts post = postsRepo.findById(employeeDTO.getPostId()).orElse(null);
+            if (post != null) {
+                employee.setPost(post);
+            }
+        }
+
+        // Only try to set profile if profileId is not null
+        if (employeeDTO.getProfileId() != null) {
+            Profiles profile = profileRepo.findById(employeeDTO.getProfileId()).orElse(null);
+            if (profile != null) {
+                employee.setProfile(profile);
+            }
+        }
+
+        // Only try to set department if filiereId is not null
+        if (employeeDTO.getDepartementId() != null) {
+            Departement departement = departementRepo.findById(employeeDTO.getDepartementId()).orElse(null);
+            if (departement != null) {
+                employee.setDepartement(departement);
+            }
+        }
+
+        // Handle image upload if present
+        MultipartFile file = employeeDTO.getImage();
         if (file != null && !file.isEmpty()) {
             String filename = StringUtils.cleanPath(file.getOriginalFilename());
             Path storageDirectory = Paths.get(storageDirectoryPath);
@@ -146,12 +168,10 @@ public class EmployeeImp implements EmployeeService {
             file.transferTo(destinationPath);
             employee.setImage(baseUrl + filename);
         }
-        //employee.setGrade(grade);
-        //employee.setPost(post);
-        //employee.setProfile(profile);
-        //employee.setFiliere(filiere);
+
+        // Save employee and return ID
         employeeRep.save(employee);
-        return  employee.getIdE();
+        return employee.getIdE();
     }
     @Override
     public List<Employees> getAllEmployees() {
@@ -164,19 +184,14 @@ public class EmployeeImp implements EmployeeService {
 
     }
     @Override
-    public Filiere getFiliereByIdEmployee(Long id){
+    public Departement getDepartmentByIdEmployee(Long id){
         Employees employee= employeeRep.findById(id).orElseThrow(() ->new IllegalArgumentException("Employee not found"));
-        return employee.getFiliere();
+        return employee.getDepartement();
 
     }
 
-
-
     @Override
     public void updateEmployee(Long id, EmployeesDTO employeeDTO) throws IOException {
-        Posts post = postsRepo.findById(employeeDTO.getPostId()).orElse(null);
-        Grades grade = gradesRepo.findById(employeeDTO.getGradeId()).orElse(null);
-        Profiles profile = profileRepo.findById(employeeDTO.getProfileId()).orElse(null);
 
         Employees employeesToUpdate = employeeRep.findById(id).orElseThrow(() ->new IllegalArgumentException("Employee not found"));
         employeesToUpdate.setFirstName(employeeDTO.getFirstName());
@@ -188,6 +203,31 @@ public class EmployeeImp implements EmployeeService {
         employeesToUpdate.setAddress(employeeDTO.getAddress());
         employeesToUpdate.setHireDate(employeeDTO.getHireDate());
         employeesToUpdate.setWorkLocation(employeeDTO.getWorkLocation());
+
+        // Handle optional relationships
+        // Only try to set post if postId is not null
+        if (employeeDTO.getPostId() != null) {
+            Posts post = postsRepo.findById(employeeDTO.getPostId()).orElse(null);
+            if (post != null) {
+                employeesToUpdate.setPost(post);
+            }
+        }
+
+        // Only try to set profile if profileId is not null
+        if (employeeDTO.getProfileId() != null) {
+            Profiles profile = profileRepo.findById(employeeDTO.getProfileId()).orElse(null);
+            if (profile != null) {
+                employeesToUpdate.setProfile(profile);
+            }
+        }
+
+        // Only try to set department if filiereId is not null
+        if (employeeDTO.getDepartementId() != null) {
+            Departement departement = departementRepo.findById(employeeDTO.getDepartementId()).orElse(null);
+            if (departement != null) {
+                employeesToUpdate.setDepartement(departement);
+            }
+        }
 
         MultipartFile file = employeeDTO.getImage();
         if (file != null && !file.isEmpty()) {
@@ -204,15 +244,11 @@ public class EmployeeImp implements EmployeeService {
         if (newPassword != null && !newPassword.isEmpty()) {
             employeesToUpdate.setPassword(passwordEncoder.encode(newPassword));
         }
-        Long filieret  = employeeDTO.getFiliereId();
-        if (filieret != null) {
-            Filiere filiere= filiereRepo.findById(filieret).orElse(null);
-            employeesToUpdate.setFiliere(filiere);
+        Long depId  = employeeDTO.getDepartementId();
+        if (depId != null) {
+            Departement departement= departementRepo.findById(depId).orElse(null);
+            employeesToUpdate.setDepartement(departement);
         }
-
-        employeesToUpdate.setProfile(profile);
-        employeesToUpdate.setGrade(grade);
-        employeesToUpdate.setPost(post);
 
         employeeRep.save(employeesToUpdate);
     }

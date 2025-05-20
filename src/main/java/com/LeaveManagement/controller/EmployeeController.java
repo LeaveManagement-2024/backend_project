@@ -3,10 +3,7 @@ package com.LeaveManagement.controller;
 import com.LeaveManagement.Dto.EmployeesDTO;
 import com.LeaveManagement.Dto.LogInDTO;
 import com.LeaveManagement.Dto.UpdatePassword;
-import com.LeaveManagement.Entity.AnnualLeaveLine;
-import com.LeaveManagement.Entity.Employees;
-import com.LeaveManagement.Entity.Filiere;
-import com.LeaveManagement.Entity.Leave;
+import com.LeaveManagement.Entity.*;
 import com.LeaveManagement.Service.EmployeeService;
 import com.LeaveManagement.response.LogInResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,39 +34,38 @@ public class EmployeeController {
 
     @PostMapping(path = "/save", consumes = {"multipart/form-data"})
     public Long saveEmployee(
-            @RequestParam("firstNameFr") String firstNameFr,
-            @RequestParam("lastNameFr") String lastNameFr,
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
             @RequestParam("phone") String phone,
             @RequestParam("ppr") String ppr,
             @RequestParam("cin") String cin,
-            @RequestParam("addressFr") String addressFr,
+            @RequestParam("address") String address,
             @RequestParam("hireDate") String hireDate, // Format: "yyyy-MM-dd"
-            @RequestParam("workLocationFr") String workLocationFr,
-            @RequestParam(value = "image",required = false) MultipartFile image
-            //@RequestParam("postId") Long postId,
-            //@RequestParam("gradeId") Long gradeId,
-            //@RequestParam("profileId") Long profileId,
-            //@RequestParam("filiereId") Long filiereId
+            @RequestParam("workLocation") String workLocation,
+            @RequestParam(value = "image",required = false) MultipartFile image,
+            @RequestParam(value = "postId" ,required = false) Long postId,
+            @RequestParam(value = "departmentId",required = false) Long departmentId,
+            @RequestParam(value = "profileId",required = false) Long profileId
             ) throws IOException {
 
         EmployeesDTO employeesDTO = new EmployeesDTO();
-        employeesDTO.setFirstName(firstNameFr);
-        employeesDTO.setLastName(lastNameFr);
+        employeesDTO.setFirstName(firstName);
+        employeesDTO.setLastName(lastName);
         employeesDTO.setEmail(email);
         employeesDTO.setPassword(password);
         employeesDTO.setPhone(phone);
         employeesDTO.setPpr(ppr);
         employeesDTO.setCin(cin);
-        employeesDTO.setAddress(addressFr);
+        employeesDTO.setAddress(address);
         employeesDTO.setHireDate(LocalDate.parse(hireDate));
-        employeesDTO.setWorkLocation(workLocationFr);
+        employeesDTO.setWorkLocation(workLocation);
         employeesDTO.setImage(image);
-       // employeesDTO.setPostId(postId);
-       // employeesDTO.setGradeId(gradeId);
-       // employeesDTO.setProfileId(profileId);
-        //employeesDTO.setFiliereId(filiereId);
+        employeesDTO.setPostId(postId);
+        employeesDTO.setProfileId(profileId);
+        employeesDTO.setDepartementId(departmentId);
+        employeesDTO.setProfileId(profileId);
 
         Long id  = employeeService.addEmployee(employeesDTO);
         return id;
@@ -84,9 +80,10 @@ public class EmployeeController {
     public Employees getEmployeeById(@PathVariable Long Id) {
         return employeeService.GetEmployeeById(Id);
     }
-    @GetMapping(path="/getFiliere/{Id}")
-    public Filiere getFiliere(@PathVariable Long Id) {
-        return employeeService.getFiliereByIdEmployee(Id);
+
+    @GetMapping(path="/getDepartment/{Id}")
+    public Departement getFiliere(@PathVariable Long Id) {
+        return employeeService.getDepartmentByIdEmployee(Id);
     }
     @PutMapping(path = "/update/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> updateUser(
@@ -98,14 +95,13 @@ public class EmployeeController {
             @RequestParam("phone") String phone,
             @RequestParam("ppr") String ppr,
             @RequestParam("cin") String cin,
-            @RequestParam("addressFr") String addressFr,
+            @RequestParam("address") String address,
             @RequestParam("hireDate") String hireDate, // Format: "yyyy-MM-dd"
             @RequestParam("workLocation") String workLocation,
             @RequestParam(value = "image",required = false) MultipartFile image,
-            @RequestParam("postId") Long postId,
-            @RequestParam("gradeId") Long gradeId,
-            @RequestParam("profileId") Long profileId,
-            @RequestParam(value = "filiereId",required = false) Long filiereId) throws IOException {
+            @RequestParam(value = "postId",required = false) Long postId,
+            @RequestParam(value = "profileId",required = false ) Long profileId,
+            @RequestParam(value = "departmentId",required = false) Long departmentId) throws IOException {
 
         EmployeesDTO employeesDTO = new EmployeesDTO();
         employeesDTO.setFirstName(firstName);
@@ -115,14 +111,13 @@ public class EmployeeController {
         employeesDTO.setPhone(phone);
         employeesDTO.setPpr(ppr);
         employeesDTO.setCin(cin);
-        employeesDTO.setAddress(addressFr);
+        employeesDTO.setAddress(address);
         employeesDTO.setHireDate(LocalDate.parse(hireDate));
         employeesDTO.setWorkLocation(workLocation);
         employeesDTO.setImage(image);
         employeesDTO.setPostId(postId);
-        employeesDTO.setGradeId(gradeId);
         employeesDTO.setProfileId(profileId);
-        employeesDTO.setFiliereId(filiereId);
+        employeesDTO.setDepartementId(departmentId);
         employeeService.updateEmployee(id, employeesDTO);
         return ResponseEntity.ok("Employee updated successfully");
     }

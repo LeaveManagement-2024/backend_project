@@ -33,7 +33,6 @@ public class LeaveImp implements LeaveService {
         AnnualLeave annualLeave = annualLeaveRepo.findById(leaveDTO.getAnnualLeaveId()).orElse(null);
         LeaveType leaveType = leaveTypeRepo.findById(leaveDTO.getLeaveTypeId()).orElse(null);
         Employees replacement = employeeRepo.findById(leaveDTO.getReplacementId()).orElse(null);
-        Employees responsible = employeeRepo.findById(leaveDTO.getResponsible()).orElse(null);
         Employees lmanager = employeeRepo.findById(leaveDTO.getLmanagerId()).orElse(null);
         Leave leave = new Leave();
         leave.setStartDate(leaveDTO.getStartDate());
@@ -42,7 +41,6 @@ public class LeaveImp implements LeaveService {
         leave.setAnnualLeave(annualLeave);
         leave.setLeaveType(leaveType);
         leave.setReplacement(replacement);
-        leave.setResponsible(responsible);
         leave.setLmanager(lmanager);
         leave.setManagerVisa("false");
         leave.setRemplecementVisa("false");
@@ -68,7 +66,6 @@ public class LeaveImp implements LeaveService {
         LeaveType leaveType = leaveTypeRepo.findById(leaveDTO.getLeaveTypeId()).orElse(null);
         Employees replacement = employeeRepo.findById(leaveDTO.getReplacementId()).orElse(null);
         Employees lmanager = employeeRepo.findById(leaveDTO.getLmanagerId()).orElse(null);
-        Employees responsible = employeeRepo.findById(leaveDTO.getResponsible()).orElse(null);
         Leave leaveToUpdate = leaveRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Leave not found"));
         leaveToUpdate.setStartDate(leaveDTO.getStartDate());
         leaveToUpdate.setEndDate(leaveDTO.getEndDate());
@@ -83,7 +80,6 @@ public class LeaveImp implements LeaveService {
         leaveToUpdate.setLeaveType(leaveType);
         leaveToUpdate.setReplacement(replacement);
         leaveToUpdate.setLmanager(lmanager);
-        leaveToUpdate.setResponsible(responsible);
         leaveRepo.save(leaveToUpdate);
     }
 

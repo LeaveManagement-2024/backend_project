@@ -41,8 +41,8 @@ public class PostsImpl implements PostsService {
     @Override
     public void updatePosts(Long id, Posts post) {
         Posts postsToUpdate = postsRepo.findById(id).orElseThrow(()->new IllegalArgumentException("Post not found"));
-        postsToUpdate.setPostNameFr(post.getPostNameFr());
-        postsToUpdate.setPostNameAr(post.getPostNameAr());
+        postsToUpdate.setPostName(post.getPostName());
+
         postsRepo.save(postsToUpdate);
     }
 

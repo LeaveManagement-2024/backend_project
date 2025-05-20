@@ -21,11 +21,15 @@ public class DepartementImp implements DepartementService {
 
     @Override
     public Long addDepartement(DepartementDTO departementDTO) {
+
         Employees employees = employeeRepo.findById(departementDTO.getRespDepartementId()).orElse(null);
         Departement departement=new Departement();
-        departement.setDepartementNameAr(departementDTO.getDepartementNameAr());
-        departement.setDepartementNameFr(departementDTO.getDepartementNameFr());
-        departement.setRespDepartement(employees);
+        departement.setDepartementName(departementDTO.getDepartementName());
+        if (employees != null) {
+            departement.setRespDepartement(employees);
+        } else {
+            throw new IllegalArgumentException("Employee not found");
+        }
         departementRepo.save(departement);
         return departement.getIdDepartement();
     }
@@ -44,8 +48,7 @@ public class DepartementImp implements DepartementService {
     public void updateDepartement(Long id, DepartementDTO departementDTO) {
         Departement departementToUpdate = departementRepo.findById(id).orElseThrow(()->new IllegalArgumentException("Departement not found"));
         Employees employees = employeeRepo.findById(departementDTO.getRespDepartementId()).orElseThrow(()->new IllegalArgumentException("Employee not found"));
-        departementToUpdate.setDepartementNameAr(departementDTO.getDepartementNameAr());
-        departementToUpdate.setDepartementNameFr(departementDTO.getDepartementNameFr());
+        departementToUpdate.setDepartementName(departementDTO.getDepartementName());
         departementToUpdate.setRespDepartement(employees);
         departementRepo.save(departementToUpdate);
     }

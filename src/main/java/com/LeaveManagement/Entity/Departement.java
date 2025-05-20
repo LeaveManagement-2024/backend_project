@@ -9,10 +9,9 @@ public class Departement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long IdDepartement;
-    @Column(columnDefinition = "NVARCHAR(255)")
-    private String departementNameFr;
-    @Column(columnDefinition = "NVARCHAR(255)")
-    private String departementNameAr;
+
+    private String departementName;
+
     @ManyToOne
     @JsonManagedReference
     @JoinColumn(name = "respDepartementId")
@@ -21,10 +20,10 @@ public class Departement {
     public Departement() {
     }
 
-    public Departement(long idDepartement, String departementNameFr, String departementNameAr, Employees respDepartement) {
+    public Departement(long idDepartement, String departementName,Employees respDepartement) {
         IdDepartement = idDepartement;
-        this.departementNameFr = departementNameFr;
-        this.departementNameAr = departementNameAr;
+        this.departementName = departementName;
+
         this.respDepartement = respDepartement;
     }
 
@@ -36,20 +35,12 @@ public class Departement {
         IdDepartement = idDepartement;
     }
 
-    public String getDepartementNameFr() {
-        return departementNameFr;
+    public String getDepartementName() {
+        return departementName;
     }
 
-    public void setDepartementNameFr(String departementNameFr) {
-        this.departementNameFr = departementNameFr;
-    }
-
-    public String getDepartementNameAr() {
-        return departementNameAr;
-    }
-
-    public void setDepartementNameAr(String departementNameAr) {
-        this.departementNameAr = departementNameAr;
+    public void setDepartementName(String departementName) {
+        this.departementName = departementName;
     }
 
     public Employees getRespDepartement() {

@@ -19,7 +19,7 @@ public class EmployeesDTO{
     private MultipartFile image;
     private Long profileId;
     private Long gradeId;
-    private Long filiereId;
+    private Long departementId;
     private Long postId;
 
     public EmployeesDTO() {
@@ -137,12 +137,12 @@ public class EmployeesDTO{
         this.gradeId = gradeId;
     }
 
-    public Long getFiliereId() {
-        return filiereId;
+    public Long getDepartementId() {
+        return departementId;
     }
 
-    public void setFiliereId(Long filiereId) {
-        this.filiereId = filiereId;
+    public void setDepartementId(Long departementId) {
+        this.departementId = departementId;
     }
 
     public Long getPostId() {
@@ -153,7 +153,7 @@ public class EmployeesDTO{
         this.postId = postId;
     }
 
-    public EmployeesDTO(Long idE, String firstNameFr, String firstNameAr, String lastNameFr, String lastNameAr, String email, String password, String phone, String ppr, String cin, String addressFr, String addressAr, LocalDate hireDate, String workLocationFr, String workLocationAr, MultipartFile image, Long profileId, Long gradeId, Long filiereId, Long postId) {
+    public EmployeesDTO(Long idE, String firstName, String lastName , String email, String password, String phone, String ppr, String cin, String address,LocalDate hireDate, String workLocation, MultipartFile image, Long profileId, Long gradeId, Long departementId, Long postId) {
         this.idE = idE;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -168,7 +168,7 @@ public class EmployeesDTO{
         this.image = image;
         this.profileId = profileId;
         this.gradeId = gradeId;
-        this.filiereId = filiereId;
+        this.departementId = departementId;
         this.postId = postId;
     }
 

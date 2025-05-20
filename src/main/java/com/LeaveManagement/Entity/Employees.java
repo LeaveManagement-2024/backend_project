@@ -40,17 +40,13 @@ public class Employees {
     private Profiles profile;
 
     @ManyToOne
-    @JoinColumn(name = "IdGrade")
-    private Grades grade;
-
-    @ManyToOne
     @JoinColumn(name = "IdPost")
     private Posts post;
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "IdFiliere")
-    private Filiere filiere;
+    @JoinColumn(name = "IdDepartement")
+    private Departement departement;
 
     @JsonBackReference
     @OneToMany(mappedBy = "employee")
@@ -59,7 +55,6 @@ public class Employees {
     @JsonBackReference
     @OneToMany(mappedBy = "employee")
     private List<Leave> leaves;
-
     public Employees() {
     }
 
@@ -168,14 +163,6 @@ public class Employees {
         this.profile = profile;
     }
 
-    public Grades getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Grades grade) {
-        this.grade = grade;
-    }
-
     public Posts getPost() {
         return post;
     }
@@ -184,12 +171,12 @@ public class Employees {
         this.post = post;
     }
 
-    public Filiere getFiliere() {
-        return filiere;
+    public Departement getDepartement() {
+        return departement;
     }
 
-    public void setFiliere(Filiere filiere) {
-        this.filiere = filiere;
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
     }
 
     public List<AnnualLeaveLine> getAnnualLeaveLines() {
@@ -212,8 +199,8 @@ public class Employees {
     public Employees(Long idE, String firstName, String lastName, String email,
                      String password, String phone, String ppr, String cin,
                      String address, LocalDate hireDate, String workLocation,
-                     String image, Profiles profile, Grades grade, Posts post,
-                     Filiere filiere, List<AnnualLeaveLine> annualLeaveLines,
+                     String image, Profiles profile, Posts post,
+                     Departement departement, List<AnnualLeaveLine> annualLeaveLines,
                      List<Leave> leaves) {
         this.idE = idE;
         this.firstName = firstName;
@@ -228,9 +215,8 @@ public class Employees {
         this.workLocation = workLocation;
         this.image = image;
         this.profile = profile;
-        this.grade = grade;
         this.post = post;
-        this.filiere = filiere;
+        this.departement = departement;
         this.annualLeaveLines = annualLeaveLines;
         this.leaves = leaves;
     }

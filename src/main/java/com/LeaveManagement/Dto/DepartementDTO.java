@@ -6,40 +6,32 @@ import jakarta.persistence.*;
 
 public class DepartementDTO {
     private Long IdDepartement;
-    private String departementNameFr;
-    private String departementNameAr;
+    private String departementName;
     private Long respDepartementId;
 
     public DepartementDTO() {
     }
-    public DepartementDTO(long idDepartement, String departementNameFr, String departementNameAr, Long respDepartementId) {
+    public DepartementDTO(long idDepartement, String departementName, Long respDepartementId) {
         IdDepartement = idDepartement;
-        this.departementNameFr = departementNameFr;
-        this.departementNameAr = departementNameAr;
+        this.departementName = departementName;
+
         this.respDepartementId = respDepartementId;
     }
-    public long getIdDepartement() {
+
+    public Long getIdDepartement() {
         return IdDepartement;
     }
 
-    public void setIdDepartement(long idDepartement) {
+    public void setIdDepartement(Long idDepartement) {
         IdDepartement = idDepartement;
     }
 
-    public String getDepartementNameFr() {
-        return departementNameFr;
+    public String getDepartementName() {
+        return departementName;
     }
 
-    public void setDepartementNameFr(String departementNameFr) {
-        this.departementNameFr = departementNameFr;
-    }
-
-    public String getDepartementNameAr() {
-        return departementNameAr;
-    }
-
-    public void setDepartementNameAr(String departementNameAr) {
-        this.departementNameAr = departementNameAr;
+    public void setDepartementName(String departementName) {
+        this.departementName = departementName;
     }
 
     public Long getRespDepartementId() {
@@ -49,6 +41,4 @@ public class DepartementDTO {
     public void setRespDepartementId(Long respDepartementId) {
         this.respDepartementId = respDepartementId;
     }
-
-
 }

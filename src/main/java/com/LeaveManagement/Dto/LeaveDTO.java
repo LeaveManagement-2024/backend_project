@@ -16,13 +16,11 @@ public class LeaveDTO {
     private LocalDate responsibleVisaDate;
     private String managerVisa;
     private LocalDate managerVisaDate;
-
     private Long employeeId;
     private Long annualLeaveId;
     private Long leaveTypeId;
     private Long replacementId;
     private Long lmanagerId;
-    private Long responsible;
 
     public LeaveDTO() {
     }
@@ -42,7 +40,7 @@ public class LeaveDTO {
         this.leaveTypeId = leaveTypeId;
         this.replacementId = replacementId;
         this.lmanagerId = lmanagerId;
-        this.responsible = responsible;
+
     }
 
     public Long getLeaveId() {
@@ -157,11 +155,5 @@ public class LeaveDTO {
         this.lmanagerId = lmanagerId;
     }
 
-    public Long getResponsible() {
-        return responsible;
-    }
 
-    public void setResponsible(Long responsible) {
-        this.responsible = responsible;
-    }
 }
