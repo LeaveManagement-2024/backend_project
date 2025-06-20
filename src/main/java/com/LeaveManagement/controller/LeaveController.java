@@ -65,10 +65,6 @@ public class LeaveController {
     public List<Leave> UnconfermedLeaveByManager() {
         return leaveService.UnconfermedLeaveByManager();
     }
-    @GetMapping(path = "/UnconfermedLeaveByResponsible")
-    public List<Leave> UnconfermedLeaveByResponsible() {
-        return leaveService.UnconfermedLeaveByResponsible();
-    }
     @GetMapping(path = "/UnconfermedLeaveByRemplacment")
     public List<Leave> UnconfermedLeaveByRemplacment() {
         return leaveService.UnconfermedLeaveByRemplacment();

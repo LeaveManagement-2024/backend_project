@@ -3,9 +3,7 @@ package com.LeaveManagement.Entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "leaves")
@@ -19,9 +17,6 @@ public class Leave {
     @Column(columnDefinition = "VARCHAR(255)")
     private String remplecementVisa;
     private LocalDate remplecementVisaDate;
-    @Column(columnDefinition = "VARCHAR(255)")
-    private String responsibleVisa;
-    private LocalDate responsibleVisaDate;
     @Column(columnDefinition = "VARCHAR(255)")
     private String managerVisa;
     private LocalDate managerVisaDate;
@@ -51,22 +46,17 @@ public class Leave {
     @ManyToOne
     @JoinColumn(name = "lmanagerId")
     private Employees lmanager;
-    @JsonManagedReference
-    @ManyToOne
-    @JoinColumn(name = "responsibleId")
-    private Employees responsible;
+
 
     public Leave() {
     }
 
-    public Leave(Long leaveId, LocalDate startDate, LocalDate endDate, String remplecementVisa, LocalDate remplecementVisaDate, String responsibleVisa, LocalDate responsibleVisaDate, String managerVisa, LocalDate managerVisaDate, Employees employee, AnnualLeave annualLeave, LeaveType leaveType, Employees replacement, Employees lmanager, Employees responsible) {
+    public Leave(Long leaveId, LocalDate startDate, LocalDate endDate, String remplecementVisa, LocalDate remplecementVisaDate, String managerVisa, LocalDate managerVisaDate, Employees employee, AnnualLeave annualLeave, LeaveType leaveType, Employees replacement, Employees lmanager) {
         this.leaveId = leaveId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.remplecementVisa = remplecementVisa;
         this.remplecementVisaDate = remplecementVisaDate;
-        this.responsibleVisa = responsibleVisa;
-        this.responsibleVisaDate = responsibleVisaDate;
         this.managerVisa = managerVisa;
         this.managerVisaDate = managerVisaDate;
         this.employee = employee;
@@ -74,7 +64,6 @@ public class Leave {
         this.leaveType = leaveType;
         this.replacement = replacement;
         this.lmanager = lmanager;
-        this.responsible = responsible;
     }
 
     public Long getLeaveId() {
@@ -117,21 +106,6 @@ public class Leave {
         this.remplecementVisaDate = remplecementVisaDate;
     }
 
-    public String getResponsibleVisa() {
-        return responsibleVisa;
-    }
-
-    public void setResponsibleVisa(String responsibleVisa) {
-        this.responsibleVisa = responsibleVisa;
-    }
-
-    public LocalDate getResponsibleVisaDate() {
-        return responsibleVisaDate;
-    }
-
-    public void setResponsibleVisaDate(LocalDate responsibleVisaDate) {
-        this.responsibleVisaDate = responsibleVisaDate;
-    }
 
     public String getManagerVisa() {
         return managerVisa;
@@ -189,11 +163,4 @@ public class Leave {
         this.lmanager = lmanager;
     }
 
-    public Employees getResponsible() {
-        return responsible;
-    }
-
-    public void setResponsible(Employees responsible) {
-        this.responsible = responsible;
-    }
 }

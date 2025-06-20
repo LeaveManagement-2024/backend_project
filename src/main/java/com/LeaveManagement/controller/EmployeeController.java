@@ -186,10 +186,6 @@ public class EmployeeController {
     public List<Leave>UnconfermedLeaveByManagerE(@PathVariable Long Id) {
         return employeeService.UnconfermedLeaveByManagerE(Id);
     }
-    @GetMapping(path="/UnconfermedLeaveByResponsibleE/{Id}")
-    public List<Leave>UnconfermedLeaveByResponsibleE(@PathVariable Long Id) {
-        return employeeService.UnconfermedLeaveByResponsibleE(Id);
-    }
     @GetMapping(path="/UnconfermedLeaveByRemplacmentE/{Id}")
     public List<Leave>UnconfermedLeaveByRemplacmentE(@PathVariable Long Id) {
         return employeeService.UnconfermedLeaveByRemplacmentE(Id);

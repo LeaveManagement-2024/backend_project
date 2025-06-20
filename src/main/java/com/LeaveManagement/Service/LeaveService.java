@@ -21,6 +21,5 @@ public interface LeaveService {
     List<Leave> ConfermedLeave();
     List<Leave> UnconfermedLeave();
     List<Leave> UnconfermedLeaveByManager();
-    List<Leave> UnconfermedLeaveByResponsible();
     List<Leave> UnconfermedLeaveByRemplacment();
 }

@@ -44,7 +44,6 @@ public class LeaveImp implements LeaveService {
         leave.setLmanager(lmanager);
         leave.setManagerVisa("false");
         leave.setRemplecementVisa("false");
-        leave.setResponsibleVisa("false");
         leaveRepo.save(leave);
         return leave.getLeaveId();
     }
@@ -73,8 +72,6 @@ public class LeaveImp implements LeaveService {
         leaveToUpdate.setRemplecementVisaDate(leaveDTO.getRemplecementVisaDate());
         leaveToUpdate.setManagerVisa("false");
         leaveToUpdate.setManagerVisaDate(leaveDTO.getManagerVisaDate());
-        leaveToUpdate.setResponsibleVisa("false");
-        leaveToUpdate.setResponsibleVisaDate(leaveDTO.getResponsibleVisaDate());
         leaveToUpdate.setEmployee(employee);
         leaveToUpdate.setAnnualLeave(annualLeave);
         leaveToUpdate.setLeaveType(leaveType);
@@ -174,18 +171,6 @@ public class LeaveImp implements LeaveService {
         // Filtrer les congés qui ne sont pas encore confirmés (visa "false")
         List<Leave> unconfirmedLeaves = leaves.stream()
                 .filter(leave -> "false".equals(leave.getManagerVisa()))
-                .collect(Collectors.toList());
-
-        return unconfirmedLeaves;
-    }
-
-    @Override
-    public List<Leave> UnconfermedLeaveByResponsible() {
-        List<Leave> leaves = leaveRepo.findAll();
-
-        // Filtrer les congés qui ne sont pas encore confirmés (visa "false")
-        List<Leave> unconfirmedLeaves = leaves.stream()
-                .filter(leave -> "false".equals(leave.getResponsibleVisa()))
                 .collect(Collectors.toList());
 
         return unconfirmedLeaves;

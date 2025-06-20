@@ -351,20 +351,7 @@ public class EmployeeImp implements EmployeeService {
         return unconfirmedLeaves;
     }
 
-    @Override
-    public List<Leave> UnconfermedLeaveByResponsibleE(Long id) {
-        Employees employee = employeeRep.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
-        List<Leave> leaves = employee.getLeaves();
-
-        // Filtrer les congés qui ne sont pas encore confirmés (visa "false")
-        List<Leave> unconfirmedLeaves = leaves.stream()
-                .filter(leave -> "false".equals(leave.getResponsibleVisa()))
-                .collect(Collectors.toList());
-
-        return unconfirmedLeaves;
-    }
 
     @Override
     public List<Leave> UnconfermedLeaveByRemplacmentE(Long id) {
@@ -388,7 +375,6 @@ public class EmployeeImp implements EmployeeService {
         // Récupérer tous les congés où cet employé est soit manager, soit responsable, soit remplaçant
         List<Leave> leavesToConfirm = leaveRepo.findAll().stream()
                 .filter(leave -> (leave.getLmanager() != null && leave.getLmanager().getIdE().equals(id) && leave.getManagerVisa().equals("false"))
-                        || (leave.getResponsible() != null && leave.getResponsible().getIdE().equals(id) && leave.getResponsibleVisa() .equals("false"))
                         || (leave.getReplacement() != null && leave.getReplacement().getIdE().equals(id) && leave.getRemplecementVisa().equals("false")))
                 .collect(Collectors.toList());
 
@@ -402,7 +388,6 @@ public class EmployeeImp implements EmployeeService {
         // Récupérer tous les congés où cet employé est soit manager, soit responsable, soit remplaçant
         List<Leave> leavesConfirmedLeaves = leaveRepo.findAll().stream()
                 .filter(leave -> (leave.getLmanager() != null && leave.getLmanager().getIdE().equals(id) && leave.getManagerVisa().equals("true"))
-                        || (leave.getResponsible() != null && leave.getResponsible().getIdE().equals(id) && leave.getResponsibleVisa() .equals("true"))
                         || (leave.getReplacement() != null && leave.getReplacement().getIdE().equals(id) && leave.getRemplecementVisa().equals("true")))
                 .collect(Collectors.toList());
 
@@ -423,7 +408,7 @@ public class EmployeeImp implements EmployeeService {
 
         Long idM=leavesToConfirm.getLmanager().getIdE();
         Long idE= employee.getIdE();
-        Long idR=leavesToConfirm.getResponsible().getIdE();
+
         Long idRe=leavesToConfirm.getReplacement().getIdE();
 
       if (idE == idM){
@@ -443,14 +428,7 @@ public class EmployeeImp implements EmployeeService {
           }
 
       }
-      if (idE == idR ){
-            leavesToConfirm.setResponsibleVisa("true");
-            LocalDate today = LocalDate.now();
-            leavesToConfirm.setResponsibleVisaDate(today);
-            leaveRepo.save(leavesToConfirm);
-            System.out.println("1");
 
-      }
       if(idE == idRe){
             leavesToConfirm.setRemplecementVisa("true");
             LocalDate today = LocalDate.now();
@@ -469,7 +447,7 @@ public class EmployeeImp implements EmployeeService {
 
         Long idM=leavesToConfirm.getLmanager().getIdE();
         Long idE= employee.getIdE();
-        Long idR=leavesToConfirm.getResponsible().getIdE();
+
         Long idRe=leavesToConfirm.getReplacement().getIdE();
 
         if (idE == idM){
@@ -488,14 +466,7 @@ public class EmployeeImp implements EmployeeService {
                 System.out.println("1");
 
         }
-        if (idE == idR){
-            leavesToConfirm.setResponsibleVisa("false");
-            LocalDate today = LocalDate.now();
-            leavesToConfirm.setResponsibleVisaDate(today);
-            leaveRepo.save(leavesToConfirm);
-            System.out.println("1");
 
-        }
         if(idE == idRe){
             leavesToConfirm.setRemplecementVisa("false");
             LocalDate today = LocalDate.now();
