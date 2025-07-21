@@ -1,13 +1,13 @@
 package com.LeaveManagement.Service.impl;
 
-import com.LeaveManagement.Dto.EmployeesDTO;
-import com.LeaveManagement.Dto.LogInDTO;
-import  com.LeaveManagement.Dto.UpdatePassword;
+import com.LeaveManagement.Dto.*;
 import com.LeaveManagement.Entity.*;
 import com.LeaveManagement.Repo.*;
 import com.LeaveManagement.Service.AnnualLeaveLineService;
 import com.LeaveManagement.Service.EmployeeService;
 import com.LeaveManagement.response.LogInResponse;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,15 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -70,6 +74,9 @@ public class EmployeeImp implements EmployeeService {
     private PublicHolidayRepo publicHolidayRepo;
     @Autowired
     private AnnualLeaveLineRepo annualLeaveLineRepo;
+
+    @Autowired
+    private ProfileRepo profileRepository;
 
     @Autowired
     private AnnualLeaveLineService annualLeaveLineService;
@@ -479,6 +486,144 @@ public class EmployeeImp implements EmployeeService {
     @Override
     public List<Employees> getEmployeesWithoutLeave(LocalDate startDate, LocalDate endDate) {
         return employeeRep.findEmployeesWithoutLeave(startDate, endDate);
+    }
+
+    @Override
+    public ImportResult importEmployeesFromCSV(MultipartFile file) throws IOException {
+        ImportResult result = new ImportResult();
+
+        try (Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8)) {
+            // Configuration d'OpenCSV
+            CsvToBean<EmployeeCSVDTO> csvToBean = new CsvToBeanBuilder<EmployeeCSVDTO>(reader)
+                    .withType(EmployeeCSVDTO.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .withIgnoreEmptyLine(true)
+                    .build();
+
+            List<EmployeeCSVDTO> csvEmployees = csvToBean.parse();
+            result.setTotalRecords(csvEmployees.size());
+
+            for (int i = 0; i < csvEmployees.size(); i++) {
+                try {
+                    EmployeeCSVDTO csvEmployee = csvEmployees.get(i);
+
+                    // Validation des données
+                    if (!validateEmployee(csvEmployee, result, i + 1)) {
+                        result.setErrorCount(result.getErrorCount() + 1);
+                        continue;
+                    }
+
+                    // Conversion en entité Employee
+                    Employees employee = convertCSVToEmployee(csvEmployee, result, i + 1);
+
+                    if (employee != null) {
+                        employeeRep.save(employee);
+                        result.setSuccessCount(result.getSuccessCount() + 1);
+                    } else {
+                        result.setErrorCount(result.getErrorCount() + 1);
+                    }
+
+                } catch (Exception e) {
+                    result.addError("Ligne " + (i + 1) + ": " + e.getMessage());
+                    result.setErrorCount(result.getErrorCount() + 1);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private boolean validateEmployee(EmployeeCSVDTO csvEmployee, ImportResult result, int lineNumber) {
+        boolean isValid = true;
+
+        if (csvEmployee.getFirstName() == null || csvEmployee.getFirstName().trim().isEmpty()) {
+            result.addError("Ligne " + lineNumber + ": Le prénom est obligatoire");
+            isValid = false;
+        }
+
+        if (csvEmployee.getLastName() == null || csvEmployee.getLastName().trim().isEmpty()) {
+            result.addError("Ligne " + lineNumber + ": Le nom est obligatoire");
+            isValid = false;
+        }
+
+        if (csvEmployee.getEmail() == null || csvEmployee.getEmail().trim().isEmpty()) {
+            result.addError("Ligne " + lineNumber + ": L'email est obligatoire");
+            isValid = false;
+        } else {
+            // CORRECTION : Vérifier si l'email existe déjà
+            Optional<Employees> existingEmployee = Optional.ofNullable(employeeRep.findByEmail(csvEmployee.getEmail()));
+            if (existingEmployee.isPresent()) {
+                result.addError("Ligne " + lineNumber + ": L'email " + csvEmployee.getEmail() + " existe déjà");
+                isValid = false;
+            }
+        }
+
+        if (csvEmployee.getHireDate() == null || csvEmployee.getHireDate().trim().isEmpty()) {
+            result.addError("Ligne " + lineNumber + ": La date d'embauche est obligatoire");
+            isValid = false;
+        } else {
+            try {
+                LocalDate.parse(csvEmployee.getHireDate());
+            } catch (DateTimeParseException e) {
+                result.addError("Ligne " + lineNumber + ": Format de date invalide. Utilisez yyyy-MM-dd");
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    }
+
+    private Employees convertCSVToEmployee(EmployeeCSVDTO csvEmployee, ImportResult result, int lineNumber) {
+        try {
+            Employees employee = new Employees();
+
+            employee.setFirstName(csvEmployee.getFirstName().trim());
+            employee.setLastName(csvEmployee.getLastName().trim());
+            employee.setEmail(csvEmployee.getEmail().trim());
+            employee.setPassword(csvEmployee.getPassword() != null ? csvEmployee.getPassword().trim() : "defaultPassword123");
+            employee.setPhone(csvEmployee.getPhone() != null ? csvEmployee.getPhone().trim() : "");
+            employee.setPpr(csvEmployee.getPpr() != null ? csvEmployee.getPpr().trim() : "");
+            employee.setCin(csvEmployee.getCin() != null ? csvEmployee.getCin().trim() : "");
+            employee.setAddress(csvEmployee.getAddress() != null ? csvEmployee.getAddress().trim() : "");
+            employee.setHireDate(LocalDate.parse(csvEmployee.getHireDate()));
+            employee.setWorkLocation(csvEmployee.getWorkLocation() != null ? csvEmployee.getWorkLocation().trim() : "");
+
+            // Recherche et assignation du profil
+            if (csvEmployee.getProfileName() != null && !csvEmployee.getProfileName().trim().isEmpty()) {
+                Optional<Profiles> profile = profileRepository.findByProfileName(csvEmployee.getProfileName().trim());
+                if (profile.isPresent()) {
+                    employee.setProfile(profile.get());
+                } else {
+                    result.addError("Ligne " + lineNumber + ": Profil '" + csvEmployee.getProfileName() + "' non trouvé");
+                }
+            }
+
+            // Recherche et assignation du département
+            if (csvEmployee.getDepartmentName() != null && !csvEmployee.getDepartmentName().trim().isEmpty()) {
+                Optional<Departement> department = departementRepo.findByDepartementName(csvEmployee.getDepartmentName().trim());
+                if (department.isPresent()) {
+                    employee.setDepartement(department.get());
+                } else {
+                    result.addError("Ligne " + lineNumber + ": Département '" + csvEmployee.getDepartmentName() + "' non trouvé");
+                }
+            }
+
+            // Recherche et assignation du poste
+            if (csvEmployee.getPostName() != null && !csvEmployee.getPostName().trim().isEmpty()) {
+                Optional<Posts> post = postsRepo.findByPostName(csvEmployee.getPostName().trim());
+                if (post.isPresent()) {
+                    employee.setPost(post.get());
+                } else {
+                    result.addError("Ligne " + lineNumber + ": Poste '" + csvEmployee.getPostName() + "' non trouvé");
+                }
+            }
+
+            return employee;
+
+        } catch (Exception e) {
+            result.addError("Ligne " + lineNumber + ": Erreur de conversion - " + e.getMessage());
+            return null;
+        }
     }
 }
 

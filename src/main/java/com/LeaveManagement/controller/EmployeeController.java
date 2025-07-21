@@ -1,6 +1,7 @@
 package com.LeaveManagement.controller;
 
 import com.LeaveManagement.Dto.EmployeesDTO;
+import com.LeaveManagement.Dto.ImportResult;
 import com.LeaveManagement.Dto.LogInDTO;
 import com.LeaveManagement.Dto.UpdatePassword;
 import com.LeaveManagement.Entity.*;
@@ -18,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "*", allowedHeaders = "*") // Ajoutez allowedHeaders
 @RequestMapping("employee")
 public class EmployeeController {
 
@@ -81,6 +82,31 @@ public class EmployeeController {
         return employeeService.GetEmployeeById(Id);
     }
 
+    @PostMapping(path = "/import-csv", consumes = "multipart/form-data")
+    public ResponseEntity<ImportResult> importEmployeesFromCSV(
+            @RequestParam("file") MultipartFile file) {
+
+        if (file.isEmpty()) {
+            ImportResult result = new ImportResult();
+            result.addError("Le fichier est vide");
+            return ResponseEntity.badRequest().body(result);
+        }
+
+        if (!file.getOriginalFilename().toLowerCase().endsWith(".csv")) {
+            ImportResult result = new ImportResult();
+            result.addError("Le fichier doit être au format CSV");
+            return ResponseEntity.badRequest().body(result);
+        }
+
+        try {
+            ImportResult result = employeeService.importEmployeesFromCSV(file);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            ImportResult result = new ImportResult();
+            result.addError("Erreur lors de l'import: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
     @GetMapping(path="/getDepartment/{Id}")
     public Departement getFiliere(@PathVariable Long Id) {
         return employeeService.getDepartmentByIdEmployee(Id);

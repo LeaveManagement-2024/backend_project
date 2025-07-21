@@ -2,7 +2,7 @@ package com.LeaveManagement.controller;
 
 import com.LeaveManagement.Dto.LeaveDTO;
 import com.LeaveManagement.Entity.Leave;
-import com.LeaveManagement.Entity.Projects;
+
 import com.LeaveManagement.Service.LeaveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

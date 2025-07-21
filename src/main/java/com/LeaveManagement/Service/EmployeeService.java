@@ -1,10 +1,12 @@
 package com.LeaveManagement.Service;
 
 import com.LeaveManagement.Dto.EmployeesDTO;
+import com.LeaveManagement.Dto.ImportResult;
 import com.LeaveManagement.Dto.LogInDTO;
 import com.LeaveManagement.Dto.UpdatePassword;
 import com.LeaveManagement.Entity.*;
 import com.LeaveManagement.response.LogInResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -34,4 +36,5 @@ public interface EmployeeService {
     List<Leave> getConfirmedLeaves(Long id);
     void LeavesToUnconfirmE(Long id, Long idL);
     public List<Employees> getEmployeesWithoutLeave(LocalDate startDate, LocalDate endDate);
+    public ImportResult importEmployeesFromCSV(MultipartFile file) throws IOException;
 }

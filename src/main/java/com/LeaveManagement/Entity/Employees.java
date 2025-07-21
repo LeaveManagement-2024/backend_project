@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Employees {
@@ -55,6 +56,11 @@ public class Employees {
     @JsonBackReference
     @OneToMany(mappedBy = "employee")
     private List<Leave> leaves;
+
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Formation> formations = new ArrayList<>();
+
     public Employees() {
     }
 
@@ -185,6 +191,14 @@ public class Employees {
 
     public void setAnnualLeaveLines(List<AnnualLeaveLine> annualLeaveLines) {
         this.annualLeaveLines = annualLeaveLines;
+    }
+
+    public List<Formation> getFormations() {
+        return formations;
+    }
+
+    public void setFormations(List<Formation> formations) {
+        this.formations = formations;
     }
 
     public List<Leave> getLeaves() {
