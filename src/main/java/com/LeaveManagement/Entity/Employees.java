@@ -58,7 +58,7 @@ public class Employees {
     private List<Leave> leaves;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Formation> formations = new ArrayList<>();
 
     public Employees() {
